@@ -15,60 +15,42 @@
  * limitations under the License.
  */
 
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { ComponentFixture } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { Observable } from 'rxjs/Observable';
 
-import { NodesApiService, TranslationService } from '@alfresco/adf-core';
+import { NodesApiService, TranslationService, setupTestBed, CoreModule, TranslationMock } from '@alfresco/adf-core';
 import { FolderDialogComponent } from './folder.dialog';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { DialogModule } from './dialog.module';
+import { Observable } from 'rxjs/Observable';
 
 describe('FolderDialogComponent', () => {
 
     let fixture: ComponentFixture<FolderDialogComponent>;
     let component: FolderDialogComponent;
-    let translationService: TranslationService;
     let nodesApi: NodesApiService;
-    let dialogRef;
+    let dialogRef = {
+        close: jasmine.createSpy('close')
+    };
 
-    beforeEach(async(() => {
-        dialogRef = {
-            close: jasmine.createSpy('close')
-        };
-
-        TestBed.configureTestingModule({
-            imports: [
-                FormsModule,
-                ReactiveFormsModule,
-                BrowserDynamicTestingModule
-            ],
-            declarations: [
-                FolderDialogComponent
-            ],
-            providers: [
-                { provide: MatDialogRef, useValue: dialogRef }
-            ]
-        });
-
-        // entryComponents are not supported yet on TestBed, that is why this ugly workaround:
-        // https://github.com/angular/angular/issues/10760
-        TestBed.overrideModule(BrowserDynamicTestingModule, {
-            set: { entryComponents: [FolderDialogComponent] }
-        });
-
-        TestBed.compileComponents();
-    }));
+    setupTestBed({
+        imports: [
+            NoopAnimationsModule,
+            CoreModule.forRoot(),
+            DialogModule
+        ],
+        providers: [
+            { provide: TranslationService, useClass: TranslationMock },
+            { provide: MatDialogRef, useValue: dialogRef }
+        ]
+    });
 
     beforeEach(() => {
+        dialogRef.close.calls.reset();
         fixture = TestBed.createComponent(FolderDialogComponent);
         component = fixture.componentInstance;
-
         nodesApi = TestBed.get(NodesApiService);
-
-        translationService = TestBed.get(TranslationService);
-        spyOn(translationService, 'get').and.returnValue(Observable.of('message'));
     });
 
     describe('Edit', () => {
@@ -119,7 +101,7 @@ describe('FolderDialogComponent', () => {
             );
         });
 
-        it('should call dialog to close with form data when submit is succesfluly', () => {
+        it('should call dialog to close with form data when submit is successfully', () => {
             const folder = {
                 data: 'folder-data'
             };
@@ -196,7 +178,7 @@ describe('FolderDialogComponent', () => {
             );
         });
 
-        it('should call dialog to close with form data when submit is succesfluly', () => {
+        it('should call dialog to close with form data when submit is successfully', () => {
             const folder = {
                 data: 'folder-data'
             };
