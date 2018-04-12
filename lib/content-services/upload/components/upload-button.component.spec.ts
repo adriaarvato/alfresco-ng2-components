@@ -16,11 +16,12 @@
  */
 
 import { SimpleChange } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ContentService, UploadService, TranslationService } from '@alfresco/adf-core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ContentService, UploadService, TranslationService, setupTestBed, CoreModule } from '@alfresco/adf-core';
 import { Observable } from 'rxjs/Observable';
 import { UploadButtonComponent } from './upload-button.component';
 import { TranslationMock } from '@alfresco/adf-core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('UploadButtonComponent', () => {
 
@@ -47,17 +48,19 @@ describe('UploadButtonComponent', () => {
     let uploadService: UploadService;
     let contentService: ContentService;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [
-                UploadButtonComponent
-            ],
-            providers: [
-                UploadService,
-                { provide: TranslationService, useClass: TranslationMock }
-            ]
-        }).compileComponents();
-    }));
+    setupTestBed({
+        imports: [
+            NoopAnimationsModule,
+            CoreModule.forRoot()
+        ],
+        declarations: [
+            UploadButtonComponent
+        ],
+        providers: [
+            UploadService,
+            { provide: TranslationService, useClass: TranslationMock }
+        ]
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(UploadButtonComponent);
