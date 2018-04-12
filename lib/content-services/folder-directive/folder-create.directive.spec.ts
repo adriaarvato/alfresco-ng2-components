@@ -15,17 +15,14 @@
  * limitations under the License.
  */
 
-import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { By } from '@angular/platform-browser';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 import { FolderDialogComponent } from '../dialogs/folder.dialog';
 
-import { DirectiveModule, ContentService, TranslateLoaderService } from '@alfresco/adf-core';
+import { ContentService, setupTestBed, CoreModule } from '@alfresco/adf-core';
 import { FolderCreateDirective } from './folder-create.directive';
 
 @Component({
@@ -43,33 +40,21 @@ describe('FolderCreateDirective', () => {
     let contentService: ContentService;
     let dialogRefMock;
 
+    setupTestBed({
+        imports: [
+            CoreModule.forRoot()
+        ],
+        declarations: [
+            TestComponent,
+            FolderDialogComponent,
+            FolderCreateDirective
+        ],
+        providers: [
+            ContentService
+        ]
+    });
+
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [
-                HttpClientModule,
-                MatDialogModule,
-                FormsModule,
-                DirectiveModule,
-                ReactiveFormsModule,
-                TranslateModule.forRoot({
-                    loader: {
-                        provide: TranslateLoader,
-                        useClass: TranslateLoaderService
-                    }
-                })
-            ],
-            declarations: [
-                TestComponent,
-                FolderDialogComponent,
-                FolderCreateDirective
-            ],
-            providers: [
-                ContentService
-            ]
-        });
-
-        TestBed.compileComponents();
-
         fixture = TestBed.createComponent(TestComponent);
         element = fixture.debugElement.query(By.directive(FolderCreateDirective));
         dialog = TestBed.get(MatDialog);
