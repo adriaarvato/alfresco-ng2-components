@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AccordionGroupComponent } from './accordion-group.component';
 import { AccordionComponent } from './accordion.component';
+import { setupTestBed } from '../testing/setupTestBed';
+import { CoreTestingModule } from '../testing/core.testing.module';
 
 describe('AccordionComponent', () => {
 
@@ -27,13 +29,9 @@ describe('AccordionComponent', () => {
     let componentGroup2: AccordionGroupComponent;
     let componentGroup3: AccordionGroupComponent;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [
-                AccordionComponent
-            ]
-        }).compileComponents();
-    }));
+    setupTestBed({
+        imports: [CoreTestingModule]
+    });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(AccordionComponent);
@@ -42,6 +40,7 @@ describe('AccordionComponent', () => {
 
     afterEach(() => {
         component.groups = [];
+        fixture.destroy();
     });
 
     it('should create the component', () => {

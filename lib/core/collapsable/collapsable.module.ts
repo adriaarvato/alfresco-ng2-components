@@ -34,6 +34,9 @@ import { AccordionComponent } from './accordion.component';
     exports: [
         AccordionComponent,
         AccordionGroupComponent
+    ],
+    providers: [
+        AccordionComponent
     ]
 })
 export class CollapsableModule {}
