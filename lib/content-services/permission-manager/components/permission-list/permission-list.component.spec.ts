@@ -18,10 +18,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PermissionListComponent } from './permission-list.component';
 import { By } from '@angular/platform-browser';
-import { NodesApiService, SearchService, setupTestBed, CoreModule,
-    AlfrescoApiService, AlfrescoApiServiceMock, TranslationService,
-    TranslationMock, AppConfigService, AppConfigServiceMock
-} from '@alfresco/adf-core';
+import { NodesApiService, SearchService, setupTestBed } from '@alfresco/adf-core';
 import { Observable } from 'rxjs/Observable';
 import { NodePermissionService } from '../../services/node-permission.service';
 import { fakeNodeWithPermissions,
@@ -30,7 +27,7 @@ import { fakeNodeWithPermissions,
          fakeSiteNodeResponse,
          fakeSiteRoles,
          fakeEmptyResponse } from '../../../mock/permission-list.component.mock';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ContentTestingModule } from '../../../testing/content.testing.module';
 
 describe('PermissionDisplayComponent', () => {
 
@@ -42,19 +39,7 @@ describe('PermissionDisplayComponent', () => {
     let searchApiService: SearchService;
 
     setupTestBed({
-        imports: [
-            NoopAnimationsModule,
-            CoreModule.forRoot()
-        ],
-        declarations: [
-            PermissionListComponent
-        ],
-        providers: [
-            { provide: AlfrescoApiService, useClass: AlfrescoApiServiceMock },
-            { provide: TranslationService, useClass: TranslationMock },
-            { provide: AppConfigService, useClass: AppConfigServiceMock },
-            NodePermissionService
-        ]
+        imports: [ContentTestingModule]
     });
 
     beforeEach(() => {
