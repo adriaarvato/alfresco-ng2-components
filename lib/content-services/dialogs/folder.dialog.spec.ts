@@ -18,12 +18,10 @@
 import { TestBed } from '@angular/core/testing';
 import { ComponentFixture } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material';
-
-import { NodesApiService, TranslationService, setupTestBed, CoreModule, TranslationMock } from '@alfresco/adf-core';
+import { NodesApiService, setupTestBed } from '@alfresco/adf-core';
 import { FolderDialogComponent } from './folder.dialog';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { DialogModule } from './dialog.module';
 import { Observable } from 'rxjs/Observable';
+import { ContentTestingModule } from '../testing/content.testing.module';
 
 describe('FolderDialogComponent', () => {
 
@@ -35,13 +33,8 @@ describe('FolderDialogComponent', () => {
     };
 
     setupTestBed({
-        imports: [
-            NoopAnimationsModule,
-            CoreModule.forRoot(),
-            DialogModule
-        ],
+        imports: [ContentTestingModule],
         providers: [
-            { provide: TranslationService, useClass: TranslationMock },
             { provide: MatDialogRef, useValue: dialogRef }
         ]
     });
@@ -51,6 +44,10 @@ describe('FolderDialogComponent', () => {
         fixture = TestBed.createComponent(FolderDialogComponent);
         component = fixture.componentInstance;
         nodesApi = TestBed.get(NodesApiService);
+    });
+
+    afterEach(() => {
+        fixture.destroy();
     });
 
     describe('Edit', () => {
