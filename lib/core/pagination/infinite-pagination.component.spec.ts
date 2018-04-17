@@ -24,7 +24,7 @@ import { InfinitePaginationComponent } from './infinite-pagination.component';
 import { PaginatedComponent } from './paginated-component.interface';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-describe('InfinitePaginationComponent', () => {
+fdescribe('InfinitePaginationComponent', () => {
 
     let fixture: ComponentFixture<InfinitePaginationComponent>;
     let component: InfinitePaginationComponent;
@@ -100,6 +100,18 @@ describe('InfinitePaginationComponent', () => {
             expect(loadingSpinner).toBeNull();
         });
 
+        fit('should hide loadmore buttom if skipCount + pageSize is > total items', (done) => {
+            pagination.hasMoreItems = true;
+            pagination.skipCount = 20;
+            pagination.totalItems = 25;
+            component.pagination = pagination;
+
+            fixture.detectChanges();
+
+            let loadMoreButton = fixture.debugElement.query(By.css('[data-automation-id="adf-infinite-pagination-button"]'));
+            expect(loadMoreButton).toBeNull();
+        });
+
         it('should trigger the loadMore event with the proper pagination object', (done) => {
             pagination.hasMoreItems = true;
             pagination.skipCount = 5;
@@ -128,7 +140,8 @@ describe('InfinitePaginationComponent', () => {
             testTarget = {
                 pagination: new BehaviorSubject<Pagination>(pagination),
                 supportedPageSizes: [],
-                updatePagination() {}
+                updatePagination() {
+                }
             };
 
             spyOn(testTarget, 'updatePagination');
@@ -148,7 +161,13 @@ describe('InfinitePaginationComponent', () => {
 
             component.onLoadMore();
 
-            expect(testTarget.updatePagination).toHaveBeenCalledWith({ maxItems: 444, skipCount: 444, totalItems: 888, hasMoreItems: true, merge: true });
+            expect(testTarget.updatePagination).toHaveBeenCalledWith({
+                maxItems: 444,
+                skipCount: 444,
+                totalItems: 888,
+                hasMoreItems: true,
+                merge: true
+            });
         });
 
         it('should unsubscribe from the target\'s pagination on onDestroy', () => {
