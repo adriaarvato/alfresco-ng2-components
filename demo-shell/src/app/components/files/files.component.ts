@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit, OnChanges, OnDestroy,
+import {
+    Component, Input, OnInit, OnChanges, OnDestroy, Optional,
     EventEmitter, ViewChild, SimpleChanges, Output
 } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
-import { MinimalNodeEntity, NodePaging, Pagination, MinimalNodeEntryEntity, SiteEntry  } from 'alfresco-js-api';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MinimalNodeEntity, NodePaging, Pagination, MinimalNodeEntryEntity, SiteEntry } from 'alfresco-js-api';
 import {
     AuthenticationService, AppConfigService, ContentService, TranslationService,
     FileUploadEvent, FolderCreatedEvent, LogService, NotificationService,
@@ -145,6 +146,7 @@ export class FilesComponent implements OnInit, OnChanges, OnDestroy {
     permissionsStyle: PermissionStyleModel[] = [];
     infiniteScrolling: boolean;
     supportedPages: number[];
+    currentSiteid = '';
 
     private onCreateFolder: Subscription;
     private onEditFolder: Subscription;
@@ -158,6 +160,7 @@ export class FilesComponent implements OnInit, OnChanges, OnDestroy {
                 private logService: LogService,
                 private preference: UserPreferencesService,
                 private appConfig: AppConfigService,
+                @Optional() private route: ActivatedRoute,
                 public authenticationService: AuthenticationService) {
         this.preference.select(UserPreferenceValues.SupportedPageSizes)
             .subscribe((pages) => {
@@ -184,6 +187,14 @@ export class FilesComponent implements OnInit, OnChanges, OnDestroy {
                 maxItems: this.preference.paginationSize,
                 skipCount: 0
             };
+        }
+
+        if (this.route) {
+            this.route.params.forEach((params: Params) => {
+                if (params['id'] && this.currentFolderId !== params['id']) {
+                    this.currentFolderId = params['id'];
+                }
+            });
         }
 
         // this.disableDragArea = false;
@@ -261,6 +272,10 @@ export class FilesComponent implements OnInit, OnChanges, OnDestroy {
         }
     }
 
+    onFolderChange($event) {
+       this.router.navigate(['/files', $event.value.id]);
+    }
+
     handlePermissionError(event: any) {
         this.translateService.get('PERMISSON.LACKOF', {
             permission: event.permission,
@@ -280,7 +295,6 @@ export class FilesComponent implements OnInit, OnChanges, OnDestroy {
 
     emitReadyEvent(event: NodePaging) {
         this.documentListReady.emit(event);
-        this.router.navigate(['/files', event.list.source.id]);
     }
 
     pageIsEmpty(node: NodePaging) {
@@ -336,7 +350,7 @@ export class FilesComponent implements OnInit, OnChanges, OnDestroy {
 
         if (this.contentService.hasPermission(contentEntry, 'update')) {
             this.dialog.open(VersionManagerDialogAdapterComponent, {
-                data: { contentEntry, showComments, allowDownload },
+                data: { contentEntry: contentEntry, showComments: showComments, allowDownload: allowDownload },
                 panelClass: 'adf-version-manager-dialog',
                 width: '630px'
             });

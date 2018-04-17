@@ -373,11 +373,16 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
             this.currentFolderId = changes.folderNode.currentValue.id;
             this.resetNewFolderPagination();
             this.loadFolder();
-        } else if (changes.currentFolderId && changes.currentFolderId.currentValue) {
+        } else if (changes.currentFolderId &&
+            changes.currentFolderId.currentValue &&
+            changes.currentFolderId.currentValue !== changes.currentFolderId.previousValue) {
             this.resetNewFolderPagination();
             this.loadFolder();
         } else if (this.data) {
             if (changes.node && changes.node.currentValue) {
+                if (changes.node.currentValue.list.pagination) {
+                    changes.node.currentValue.list.pagination.skipCount = 0;
+                }
                 this.data.loadPage(changes.node.currentValue);
                 this.onDataReady(changes.node.currentValue);
             } else if (changes.rowFilter) {
@@ -465,7 +470,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
     }
 
     updateFolderData(node: MinimalNodeEntity): void {
-        this.folderNode = null;
+        this.resetNewFolderPagination();
         this.currentFolderId = node.entry.id;
         this.reload();
         this.folderChange.emit(new NodeEntryEvent(node.entry));
@@ -740,6 +745,7 @@ export class DocumentListComponent implements OnInit, OnChanges, OnDestroy, Afte
         this.currentFolderId = nodeId;
         this.resetNewFolderPagination();
         this.loadFolder();
+        this.folderChange.emit(new NodeEntryEvent({ id: nodeId }));
     }
 
     private resetNewFolderPagination() {
